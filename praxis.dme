@@ -1,0 +1,39 @@
+// DM Environment file for praxis.dme.
+// All manual changes should be made outside the BEGIN_ and END_ blocks.
+// New source code should be placed in .dm files: choose File/New --> Code File.
+
+// BEGIN_INTERNALS
+// END_INTERNALS
+
+// BEGIN_FILE_DIR
+#define FILE_DIR .
+#define FILE_DIR "icons"
+#define FILE_DIR "icons/mobs"
+#define FILE_DIR "icons/screen"
+#define FILE_DIR "icons/turfs"
+#define FILE_DIR "img"
+// END_FILE_DIR
+
+// BEGIN_PREFERENCES
+// END_PREFERENCES
+
+// BEGIN_INCLUDE
+#include "code\_defines.dm"
+#include "code\_globals.dm"
+#include "code\_helpers.dm"
+#include "code\world.dm"
+#include "code\client\client.dm"
+#include "code\mobs\mob_controller.dm"
+#include "code\mobs\mob_soldier.dm"
+#include "code\pathfinding\path.dm"
+#include "code\screen\enemy_action.dm"
+#include "code\screen\holder.dm"
+#include "code\screen\target_selector.dm"
+#include "code\screen\buttons\buttons.dm"
+#include "code\screen\buttons\buttons_actions.dm"
+#include "code\turfs\turf.dm"
+#include "code\turn\turn.dm"
+#include "code\weapons\weapon.dm"
+#include "maps\test.dmm"
+// END_INCLUDE
+

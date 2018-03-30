@@ -1,0 +1,5 @@
+/proc/trange(var/_rad = 0, var/turf/_centre = null)
+	if(_centre)
+		var/turf/x1y1 = locate(((_centre.x-_rad)<1 ? 1 : _centre.x-_rad),((_centre.y-_rad)<1 ? 1 : _centre.y-_rad),_centre.z)
+		var/turf/x2y2 = locate(((_centre.x+_rad)>world.maxx ? world.maxx : _centre.x+_rad),((_centre.y+_rad)>world.maxy ? world.maxy : _centre.y+_rad),_centre.z)
+		return block(x1y1,x2y2)
