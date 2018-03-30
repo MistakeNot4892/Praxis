@@ -4,6 +4,17 @@
 	var/player_index = 1
 	var/list/all_players = list()
 
+/datum/turn/proc/HandleLogin(var/client/player)
+	if(!current_player)
+		SetCurrentPlayer(player.mob)
+	else if(current_player == player.mob)
+		var/mob/controller/controller = player.mob
+		if(controller.soldier)
+			controller.SetSelectedSoldier(controller.soldier)
+		else
+			controller.SetSelectedSoldier(controller.all_soldiers[1])
+
+
 /datum/turn/proc/SetCurrentPlayer(var/mob/controller/player)
 	locked = FALSE
 	if(current_player)
@@ -26,13 +37,14 @@
 
 /datum/turn/proc/EndTurn()
 	if(current_player)
-		for(var/thing in current_player.buttons)
-			var/obj/button = thing
+		for(var/thing in current_player.turn_elements)
+			var/obj/screen/button = thing
 			animate(button, alpha = 0, time = 3)
 		if(current_player.soldier)
 			for(var/thing in current_player.soldier.actions)
-				var/obj/button = thing
+				var/obj/screen/button = thing
 				animate(button, alpha = 0, time = 3)
+
 	player_index++
 	if(player_index > all_players.len)
 		player_index = 1

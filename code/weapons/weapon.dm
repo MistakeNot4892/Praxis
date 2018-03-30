@@ -11,28 +11,74 @@
 	var/single_use =        FALSE
 	var/can_crit =          FALSE
 	var/base_accuracy =     50
+	var/burst = 1
+	var/burst_delay = 5
+	var/fire_overlay = "gunfire"
+	var/hit_overlay = "gunhit"
+	var/gunfire_x_jitter = 3
+	var/gunfire_y_jitter = 3
+	var/fire_cost = 2
 
 /datum/weapon/New()
 	..()
 	loaded_ammo = max_ammo
 
-/datum/weapon/proc/GetHitChance(var/dist, var/cover)
+/datum/weapon/proc/GetRawHitChance(var/dist)
 	return base_accuracy
 
+/datum/weapon/proc/GetHitChance(var/dist, var/cover)
+	var/hit = GetRawHitChance(dist)
+	if(cover <= 0)
+		hit *= 1.5
+	else
+		hit -= cover * 10
+	if(hit > 100) hit = 100
+	else if(hit < 0) hit = 0
+	return hit
+
 /datum/weapon/proc/OnHit(var/mob/soldier/user, var/mob/soldier/target)
-	if(!prob(GetHitChance(get_dist(user, target))))
+	for(var/i = 1 to burst)
+		DoFireAnim(user, target)
+	if(!prob(GetHitChance(get_dist(user, target), target.GetCover())))
 		return
+	for(var/i = 1 to burst)
+		DoHitAnim(user, target)
 	if(can_crit && prob(base_crit_chance))
 		target.TakeDamage(rand(min_crit_damage, max_crit_damage))
 	else
 		target.TakeDamage(rand(min_damage, max_damage))
+
+/datum/weapon/proc/DoFireAnim(var/mob/soldier/user, var/mob/soldier/target)
+	var/image/I
+	var/image/J
+	if(fire_overlay)
+		I = image(icon = 'icons/effects/gunfire.dmi', icon_state = fire_overlay, dir = user.dir)
+		if(gunfire_x_jitter) I.pixel_w = rand(-(gunfire_x_jitter), gunfire_x_jitter)
+		if(gunfire_y_jitter) I.pixel_z = rand(-(gunfire_y_jitter), gunfire_y_jitter)
+		user.overlays += I
+	if(hit_overlay)
+		J = image(icon = 'icons/effects/gunfire.dmi', icon_state = hit_overlay, dir = user.dir)
+		if(gunfire_x_jitter) J.pixel_w = rand(-(gunfire_x_jitter), gunfire_x_jitter)
+		if(gunfire_y_jitter) J.pixel_z = rand(-(gunfire_y_jitter), gunfire_y_jitter)
+		target.overlays += J
+
+	if(burst_delay)
+		sleep(burst_delay)
+
+	if(I) user.overlays -= I
+	if(J) target.overlays -= J
+
+/datum/weapon/proc/DoHitAnim(var/mob/soldier/user, var/mob/soldier/target)
+	if(hit_overlay)
+		if(burst_delay)
+			sleep(burst_delay)
 
 /datum/weapon/shotgun
 	name = "Shotgun"
 	icon_state = "shotgun"
 	base_crit_chance = 20
 
-/datum/weapon/shotgun/GetHitChance(var/dist, var/cover)
+/datum/weapon/shotgun/GetRawHitChance(var/dist)
 	var/hit = ..()
 	if(dist <= 10)
 		hit += 50/(dist/10)
@@ -54,8 +100,11 @@
 	name = "Light Machine Gun"
 	icon_state = "lmg"
 	base_crit_chance = 0
+	burst = 8
+	burst_delay = 3
+	fire_cost = 1
 
-/datum/weapon/lmg/GetHitChance(var/dist, var/cover)
+/datum/weapon/lmg/GetRawHitChance(var/dist)
 	var/hit = ..()
 	if(dist <= 10)
 		hit += 37.5/(dist/10)
@@ -66,7 +115,7 @@
 	icon_state = "sniper"
 	base_crit_chance = 25
 
-/datum/weapon/sniper/GetHitChance(var/dist, var/cover)
+/datum/weapon/sniper/GetRawHitChance(var/dist)
 	var/hit = ..()
 	if(dist <= 10)
 		hit -= 24.5/(dist/10)
@@ -75,6 +124,7 @@
 /datum/weapon/assault
 	name = "Assault Rifle"
 	icon_state = "assault"
+	burst = 3
 	max_ammo = 5
 	min_damage = 2
 	max_damage = 4
@@ -82,7 +132,7 @@
 	max_crit_damage = 7
 	base_crit_chance = 10
 
-/datum/weapon/assault/GetHitChance(var/dist, var/cover)
+/datum/weapon/assault/GetRawHitChance(var/dist)
 	var/hit = ..()
 	if(dist <= 10)
 		hit += 37.5/(dist/10)
@@ -97,5 +147,5 @@
 	max_damage = 6
 	can_crit = FALSE
 
-/datum/weapon/rocket/GetHitChance(var/dist, var/cover)
+/datum/weapon/rocket/GetRawHitChance(var/dist)
 	return 100

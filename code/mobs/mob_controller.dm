@@ -1,94 +1,48 @@
 /mob/controller
+
 	density = FALSE
 	opacity = FALSE
 	sight = SEE_MOBS | SEE_TURFS | SEE_OBJS
 
-	var/obj/target_selector/panel/selecting_target
 	var/mob/soldier/soldier
 	var/list/all_soldiers
 	var/max_soldiers = 3
 	var/list/remaining_moves
 	var/current_soldier_index = 1
-	var/list/buttons
-	var/obj/enemy_action/enemy_turn_indicator
-	var/obj/holder/name/name_holder
-	var/obj/holder/weapon/weapon_holder
-	var/obj/target_holder
-
-/mob/controller/proc/ConfirmTargetSelection(var/mob/soldier/target)
-	CancelTargetSelection()
-	if(target && soldier) soldier.FireAt(target)
-
-/mob/controller/proc/CancelTargetSelection()
-	if(selecting_target)
-		if(client) client.screen -= selecting_target.components
-		for(var/thing in selecting_target.components)
-			del(thing)
-		if(selecting_target)
-			del(selecting_target)
-		selecting_target = null
 
 /mob/controller/New()
-
-	buttons = list(
-		new /obj/button/end_turn(),
-		new /obj/button/info(),
-		new /obj/button/last_soldier(),
-		new /obj/button/next_soldier(),
-		new /obj/button/camera_left(),
-		new /obj/button/camera_right(),
-		new /obj/button/switch_weapons()
-	)
-
-	target_holder = new()
-	buttons += target_holder
-	target_holder.screen_loc = "EAST,4"
-
-	all_soldiers = list()
-	remaining_moves = list()
-
 	turn_controller.all_players += src
 
-	for(var/soldiertype in list(
-		/mob/soldier/assault,
-		/mob/soldier/heavy,
-		/mob/soldier/sniper,
-		/mob/soldier/support
-		))
-		var/mob/soldier/new_soldier = new soldiertype(locate(rand(1,20),rand(1,20),1), src)
-		all_soldiers[new_soldier] = new_soldier
-		remaining_moves += new_soldier
-
-	soldier = pick(all_soldiers)
-
-	name_holder = new
-	weapon_holder = new
-	buttons += name_holder
-	buttons += weapon_holder
-	enemy_turn_indicator = new
-	remaining_moves = list()
+	CreateGui()
+	CreateDefaultSoldiers()
 
 	..()
 
-	spawn
-		if(turn_controller.current_player == src)
-			enemy_turn_indicator.alpha = 0
-			for(var/thing in buttons)
-				var/obj/button = thing
+	if(turn_controller.current_player == src)
+		enemy_turn_indicator.alpha = 0
+		for(var/thing in turn_elements)
+			var/obj/screen/button = thing
+			button.alpha = 255
+		if(soldier)
+			for(var/thing in soldier.actions)
+				var/obj/screen/button = thing
 				button.alpha = 255
-			if(soldier)
-				for(var/thing in soldier.actions)
-					var/obj/button = thing
-					button.alpha = 255
-		else
-			enemy_turn_indicator.alpha = 255
-			for(var/thing in buttons)
-				var/obj/button = thing
+	else
+		enemy_turn_indicator.alpha = 255
+		for(var/thing in turn_elements)
+			var/obj/screen/button = thing
+			button.alpha = 0
+		if(soldier)
+			for(var/thing in soldier.actions)
+				var/obj/screen/button = thing
 				button.alpha = 0
-			if(soldier)
-				for(var/thing in soldier.actions)
-					var/obj/button = thing
-					button.alpha = 0
+
+	for(var/mob/controller/controller in turn_controller.all_players)
+		if(controller == src) continue
+		for(var/mob/soldier/sol in controller.all_soldiers)
+			AddClientImage(sol.enemy_health)
+		for(var/mob/soldier/sol in all_soldiers)
+			controller.AddClientImage(sol.enemy_health)
 
 /mob/controller/proc/LastSoldier(var/start_of_turn = FALSE)
 	if(remaining_moves.len)
@@ -123,9 +77,8 @@
 	soldier = _soldier
 	if(soldier)
 		soldier.controller = src
-		if(client)
-			client.images |= soldier.selected_highlight
-			client.screen |= soldier.actions
+		AddClientImage(soldier.selected_highlight)
+		AddScreenElement(soldier.actions)
 		soldier.UpdateMoveTargets()
 		name_holder.UpdateContents(soldier)
 		weapon_holder.UpdateWeapon(soldier)
@@ -135,8 +88,8 @@
 	if(soldier)
 		soldier.locked = FALSE
 		if(client)
-			client.images -= soldier.selected_highlight
-			client.screen -= soldier.actions
+			RemoveClientImage(soldier.selected_highlight)
+			RemoveScreenElement(soldier.actions)
 		soldier.ClearMoveTargets()
 		soldier.controller = null
 		soldier = null

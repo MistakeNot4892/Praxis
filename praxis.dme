@@ -8,6 +8,7 @@
 // BEGIN_FILE_DIR
 #define FILE_DIR .
 #define FILE_DIR "icons"
+#define FILE_DIR "icons/effects"
 #define FILE_DIR "icons/mobs"
 #define FILE_DIR "icons/screen"
 #define FILE_DIR "icons/turfs"
@@ -24,9 +25,13 @@
 #include "code\world.dm"
 #include "code\client\client.dm"
 #include "code\mobs\mob_controller.dm"
+#include "code\mobs\mob_controller_gui.dm"
+#include "code\mobs\mob_controller_soldiers.dm"
 #include "code\mobs\mob_soldier.dm"
+#include "code\mobs\mob_soldier_classes.dm"
+#include "code\mobs\mob_soldier_movement.dm"
 #include "code\pathfinding\path.dm"
-#include "code\screen\enemy_action.dm"
+#include "code\screen\_screen.dm"
 #include "code\screen\holder.dm"
 #include "code\screen\target_selector.dm"
 #include "code\screen\buttons\buttons.dm"

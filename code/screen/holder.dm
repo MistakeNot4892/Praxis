@@ -1,4 +1,4 @@
-/obj/holder
+/obj/screen/holder
 	plane = GUI_PLANE
 	mouse_opacity = 0
 	maptext_x = 48
@@ -6,11 +6,11 @@
 	maptext_width = 208
 	icon_state = "base"
 
-/obj/holder/name
+/obj/screen/holder/name
 	screen_loc = "1,2"
 	icon = 'icons/screen/class_panel.dmi'
 
-/obj/holder/name/proc/UpdateContents(var/mob/soldier/soldier)
+/obj/screen/holder/name/proc/UpdateContents(var/mob/soldier/soldier)
 	maptext = "[FORMAT_MAPTEXT("'[soldier.nickname]'<br><b>[uppertext(soldier.name)]</b>")]"
 	overlays.Cut()
 	var/image/I = image(icon = 'icons/screen/class_symbols.dmi', icon_state = soldier.class_icon)
@@ -18,11 +18,11 @@
 	I.pixel_w = 220
 	overlays += I
 
-/obj/holder/weapon
+/obj/screen/holder/weapon
 	icon = 'icons/screen/weapon_panel.dmi'
 	screen_loc = "EAST-7,2"
 
-/obj/holder/weapon/proc/UpdateWeapon(var/mob/soldier/soldier)
+/obj/screen/holder/weapon/proc/UpdateWeapon(var/mob/soldier/soldier)
 
 	var/datum/weapon/first_weapon = soldier.class_weapons[1]
 	var/datum/weapon/second_weapon = soldier.class_weapons[2]
@@ -51,3 +51,16 @@
 		overlays_to_add += I
 
 	overlays = overlays_to_add
+
+/obj/screen/holder/target
+	name = "Visible Targets"
+	screen_loc = "EAST,4"
+
+/obj/screen/holder/enemy_action
+	name = "Enemy Action"
+	mouse_opacity = 0
+	screen_loc = "CENTER-1,CENTER-4"
+	icon = 'icons/screen/enemy_action.dmi'
+	alpha = 0
+	plane = GUI_PLANE
+	layer = 3

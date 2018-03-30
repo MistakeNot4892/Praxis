@@ -1,27 +1,38 @@
-#define ADD_NEIGHBORS_TO_OPEN_SET(_f, _center, _depth) \
-	if(TRUE) { \
+#define _H (abs(neighbor.x - T.x) + abs(neighbor.y - T.y))
+
+#define ADD_NEIGHBORS_TO_OPEN_SET(_f, _centre, _depth) \
+	if(_depth < max_steps) { \
 		var/list/neighbors; \
-		if(!passable_neighbors[_center]) { \
+		if(!passable_neighbors[_centre]) { \
 			neighbors = list(); \
-			for(var/thing in trange(1, _center)) { \
-				var/turf/neighbor = thing; \
-				if(neighbor != _center && !neighbor.density && abs(_center.height - neighbor.height) <= 1) { \
+			for(var/checkdir in cardinal_directions) { \
+				var/turf/neighbor = get_step(_centre, checkdir); \
+				if(istype(neighbor) && neighbor != _centre && !neighbor.density && abs(_centre.height - neighbor.height) <= 1) { \
 					neighbors += neighbor; \
 				} \
 			} \
-			passable_neighbors[_center] = neighbors; \
+			passable_neighbors[_centre] = neighbors; \
 		} else { \
-			neighbors = passable_neighbors[_center]; \
+			neighbors = passable_neighbors[_centre]; \
 		} \
 		for(var/thing in neighbors) { \
 			var/turf/neighbor = thing; \
 			if(!neighbor.has_dense_atom && !closed_set[neighbor]) { \
 				var/turf/T = thing; \
-				var/f = _f + (abs(neighbor.x - T.x) + abs(neighbor.y - T.y)) + (get_dir(neighbor, T) in diagonal_directions ? T.move_cost : T.move_cost * 1.5); \
+				var/f = _f + _H + T.move_cost; \
 				if(neighbor.height < T.height) f *= 1.5; \
-				var/list/last_entry = open_set[neighbor]; \
-				if(!last_entry || f < last_entry[1]) { \
-					open_set[neighbor] = list(f, _center, _depth); \
+				var/list/adding = list(neighbor, f, _centre, _depth+1); \
+				open_set.Add(list(adding)); \
+				var/ind = open_set.len;\
+				if(ind >= 2) { \
+					var/par = round(ind * 0.5); \
+					var/list/comparing = open_set[par]; \
+					while(par >= 1 && (comparing && comparing[2] > f)) { \
+						open_set.Swap(ind, par); \
+						ind = par; \
+						par = round(ind * 0.5); \
+						if(par >= 1) comparing = open_set[par]; \
+					} \
 				} \
 			} \
 		} \
@@ -40,28 +51,22 @@
 	ADD_NEIGHBORS_TO_OPEN_SET(1, origin, 0)
 
 	while(open_set.len)
-		var/turf/_s_key
-		var/lowest_f_score = 1.#INF
-		for(var/thing in open_set)
-			var/list/check = open_set[thing]
-			if(check[1] <= lowest_f_score)
-				_s_key = thing
-				lowest_f_score = check[1]
-				break
-		if(!_s_key) _s_key = open_set[1]
-		var/list/_s = open_set[_s_key]
-		open_set -= _s_key
+		var/list/_s = open_set[1]
+		open_set.Cut(1,2)
+		var/turf/_s_key = _s[1]
 		closed_set[_s_key] = _s
+
 		if(target == _s_key)
 			var/turf/current = _s_key
 			while(current != origin)
 				final_path.Insert(1, current)
 				var/list/current_data = closed_set[current]
-				current = current_data[2]
+				current = current_data[3]
 			finalized_path = TRUE
-		else if(_s[1] < max_steps)
-			ADD_NEIGHBORS_TO_OPEN_SET(_s[1], _s_key, _s[3])
+			break
+		ADD_NEIGHBORS_TO_OPEN_SET(_s[2], _s_key, _s[4])
 
-	return finalized_path ? final_path : null
+	return finalized_path ? final_path : list()
 
-#undef GET_PASSABLE_NEIGHBORS
+#undef _H
+#undef ADD_NEIGHBORS_TO_OPEN_SET

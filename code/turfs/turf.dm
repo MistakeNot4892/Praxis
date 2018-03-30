@@ -47,8 +47,9 @@
 	var/mob/controller/clicker = usr
 	if(istype(clicker) && istype(clicker.soldier) && (src in clicker.soldier.move_targets))
 		var/list/path = GetPathBetween(clicker.soldier.loc, src, 30)
-		if(path.len <= clicker.soldier.walk_distance)
-			clicker.soldier.moved_this_turn++
-		else
-			clicker.soldier.moved_this_turn = 2
-		clicker.soldier.SetPath(path)
+		if(path && path.len)
+			if(path.len <= clicker.soldier.walk_distance)
+				clicker.soldier.moved_this_turn++
+			else
+				clicker.soldier.moved_this_turn = 2
+			clicker.soldier.SetPath(path)
