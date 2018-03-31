@@ -71,6 +71,10 @@
 				if(controller.client)
 					controller.AddClientImage(I)
 
+	for(var/thing in actions)
+		var/obj/screen/button/action/action = thing
+		action.Update(src)
+
 /mob/soldier/proc/StepAlongPath(var/pathref)
 	while(current_path && current_path.len)
 		locked = TRUE

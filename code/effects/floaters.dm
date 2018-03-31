@@ -10,16 +10,16 @@
 	maptext_y = -11
 	maptext_width = 64
 	icon_state = "64"
-	pixel_z = 48
+	pixel_z = 64
 
 /obj/effect/floater/New(var/newloc, var/_maptext)
 	..(newloc)
 	maptext = "<center><b>[_maptext]</b></center>"
 
 	spawn
-		animate(src, pixel_z = 64, time = 20)
+		animate(src, pixel_z = 78, time = 20)
 		sleep(20)
-		animate(src, pixel_z = 88, alpha = 0, time = 20)
+		animate(src, pixel_z = 94, alpha = 0, time = 20)
 		sleep(20)
 		del(src)
 

@@ -57,9 +57,14 @@ var/list/soldier_names = list(
 	var/hunkering_down
 	var/overwatching
 
+	var/image/invisible_image
+
 /mob/soldier/New(var/newloc, var/_controller)
 
 	..(newloc)
+
+	override = 1
+	invisible_image = image(src, icon = 'icons/blank.dmi')
 
 	owner = _controller
 
@@ -174,7 +179,8 @@ var/list/soldier_names = list(
 	if(health_pips == 0)
 		icon_state = "dead"
 		dead = TRUE
-		PlaySound('sounds/lrsf-soundpack/death.wav', loc, 75)
+		spawn(5)
+			PlaySound('sounds/lrsf-soundpack/death.wav', loc, 75)
 		density = FALSE
 		var/turf/T = loc
 		T.has_dense_atom = FALSE
@@ -195,13 +201,13 @@ var/list/soldier_names = list(
 		for(var/thing in (controller.turn_elements|actions))
 			var/obj/screen/button = thing
 			animate(button, alpha = 0, time = 3)
-		moved_this_turn += firing.fire_cost
-		controller.remaining_moves -= src
+		moved_this_turn += firing.end_turn_on_use ? 1.#INF : firing.fire_cost
 	firing.OnHit(src, target)
 	sleep(20)
 	if(controller)
 		controller.weapon_holder.UpdateWeapon(src)
-		if(moved_this_turn >= 2)
+		if(moved_this_turn >= 2 || firing.end_turn_on_use)
+			controller.remaining_moves -= src
 			controller.NextSoldier()
 		else
 			UpdateMoveTargets()
@@ -213,6 +219,9 @@ var/list/soldier_names = list(
 		selected_weapon = 1
 	if(controller)
 		controller.weapon_holder.UpdateWeapon(src)
+	for(var/thing in actions)
+		var/obj/screen/button/action/action = thing
+		action.Update(src)
 
 /mob/soldier/proc/UpdateHealth()
 

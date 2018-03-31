@@ -17,7 +17,8 @@
 	var/hit_overlay = "gunhit"
 	var/gunfire_x_jitter = 3
 	var/gunfire_y_jitter = 3
-	var/fire_cost = 2
+	var/fire_cost = 1
+	var/end_turn_on_use = TRUE
 	var/fire_sound = 'sounds/lrsf-soundpack/pistol.wav'
 
 /datum/weapon/New()
@@ -111,6 +112,7 @@
 	burst_delay = 3
 	fire_cost = 1
 	fire_sound = 'sounds/lrsf-soundpack/lmg.wav'
+	end_turn_on_use = FALSE
 
 /datum/weapon/lmg/GetRawHitChance(var/dist)
 	var/hit = ..()
@@ -122,6 +124,7 @@
 	name = "Sniper Rifle"
 	icon_state = "sniper"
 	base_crit_chance = 25
+	fire_cost = 2
 
 /datum/weapon/sniper/GetRawHitChance(var/dist)
 	var/hit = ..()

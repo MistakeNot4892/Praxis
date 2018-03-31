@@ -44,6 +44,10 @@
 		for(var/mob/soldier/sol in all_soldiers)
 			controller.AddClientImage(sol.enemy_health)
 
+	for(var/thing in all_soldiers)
+		var/mob/soldier/soldier = thing
+		AddClientImage(soldier.invisible_image)
+
 /mob/controller/proc/LastSoldier(var/start_of_turn = FALSE)
 	if(remaining_moves.len)
 		current_soldier_index--
