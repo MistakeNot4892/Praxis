@@ -24,6 +24,7 @@
 #include "code\_helpers.dm"
 #include "code\world.dm"
 #include "code\client\client.dm"
+#include "code\effects\floaters.dm"
 #include "code\mobs\mob_controller.dm"
 #include "code\mobs\mob_controller_gui.dm"
 #include "code\mobs\mob_controller_soldiers.dm"

@@ -27,6 +27,7 @@
 			if(!soldier.dead)
 				current_player.remaining_moves += soldier
 				soldier.moved_this_turn = 0
+				soldier.hunkering_down = FALSE
 		current_player.NextSoldier(start_of_turn = TRUE)
 
 	for(var/mob/controller/other_player in all_players)

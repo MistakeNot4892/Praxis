@@ -37,18 +37,28 @@
 	return hit
 
 /datum/weapon/proc/OnHit(var/mob/soldier/user, var/mob/soldier/target)
+
+	set waitfor = 0
+
+	new /obj/effect/floater/enormous(user.loc, FORMAT_MAPTEXT(name))
+	if(!prob(GetHitChance(get_dist(user, target), target.GetCover())))
+		new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>MISS</B></font>"))
+		return
+	if(can_crit && prob(base_crit_chance))
+		var/dam = rand(min_crit_damage, max_crit_damage)
+		target.TakeDamage(dam)
+		new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#f7aa30'><B>CRIT -[dam]</B></font>"))
+	else
+		var/dam = rand(min_damage, max_damage)
+		target.TakeDamage(dam)
+		new /obj/effect/floater/small(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>-[dam]</B></font>"))
+
 	for(var/i = 1 to burst)
 		DoFireAnim(user, target)
-	if(!prob(GetHitChance(get_dist(user, target), target.GetCover())))
-		return
-	for(var/i = 1 to burst)
-		DoHitAnim(user, target)
-	if(can_crit && prob(base_crit_chance))
-		target.TakeDamage(rand(min_crit_damage, max_crit_damage))
-	else
-		target.TakeDamage(rand(min_damage, max_damage))
+		sleep(burst_delay)
 
 /datum/weapon/proc/DoFireAnim(var/mob/soldier/user, var/mob/soldier/target)
+
 	var/image/I
 	var/image/J
 	if(fire_overlay)
@@ -62,16 +72,9 @@
 		if(gunfire_y_jitter) J.pixel_z = rand(-(gunfire_y_jitter), gunfire_y_jitter)
 		target.overlays += J
 
-	if(burst_delay)
-		sleep(burst_delay)
-
-	if(I) user.overlays -= I
-	if(J) target.overlays -= J
-
-/datum/weapon/proc/DoHitAnim(var/mob/soldier/user, var/mob/soldier/target)
-	if(hit_overlay)
-		if(burst_delay)
-			sleep(burst_delay)
+	spawn(burst_delay)
+		if(I) user.overlays -= I
+		if(J) target.overlays -= J
 
 /datum/weapon/shotgun
 	name = "Shotgun"

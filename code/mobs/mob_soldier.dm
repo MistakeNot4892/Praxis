@@ -30,8 +30,8 @@ var/list/soldier_names = list(
 
 	var/mob/controller/owner
 	var/mob/controller/controller
-	var/walk_distance = 4
-	var/sprint_distance = 9
+	var/walk_distance = 3
+	var/sprint_distance = 7
 	var/moved_this_turn = 0
 	var/list/current_path
 	var/list/move_targets
@@ -52,6 +52,9 @@ var/list/soldier_names = list(
 	var/list/friendly_health_pips
 	var/image/enemy_health
 	var/image/enemy_health_pips
+
+	var/hunkering_down
+	var/overwatching
 
 /mob/soldier/New(var/newloc, var/_controller)
 
@@ -136,7 +139,7 @@ var/list/soldier_names = list(
 		UpdateHealth()
 
 /mob/soldier/proc/GetCover()
-	var/cover = 0
+	var/cover = hunkering_down ? 2 : 0
 	var/turf/current = loc
 	if(istype(current))
 		for(var/thing in trange(1,loc)-loc)
@@ -171,6 +174,7 @@ var/list/soldier_names = list(
 	target.dir = get_dir(target, src)
 	var/datum/weapon/firing = class_weapons[selected_weapon]
 	if(controller)
+		controller.loc = loc
 		ClearMoveTargets()
 		for(var/thing in (controller.turn_elements|actions))
 			var/obj/screen/button = thing
@@ -178,6 +182,7 @@ var/list/soldier_names = list(
 		moved_this_turn += firing.fire_cost
 		controller.remaining_moves -= src
 	firing.OnHit(src, target)
+	sleep(20)
 	if(controller)
 		if(moved_this_turn >= 2)
 			controller.NextSoldier()
