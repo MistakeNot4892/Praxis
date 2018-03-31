@@ -42,17 +42,18 @@
 	set waitfor = 0
 
 	new /obj/effect/floater/enormous(user.loc, FORMAT_MAPTEXT(name))
-	if(!prob(GetHitChance(get_dist(user, target), target.GetCover())))
-		new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>MISS</B></font>"))
-		return
-	if(can_crit && prob(base_crit_chance))
-		var/dam = rand(min_crit_damage, max_crit_damage)
-		target.TakeDamage(dam)
-		new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#f7aa30'><B>CRIT -[dam]</B></font>"))
+	if(prob(GetHitChance(get_dist(user, target), target.GetCover())))
+		if(can_crit && prob(base_crit_chance))
+			var/dam = rand(min_crit_damage, max_crit_damage)
+			target.TakeDamage(dam)
+			new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#f7aa30'><B>CRIT -[dam]</B></font>"))
+		else
+			var/dam = rand(min_damage, max_damage)
+			target.TakeDamage(dam)
+			new /obj/effect/floater/small(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>-[dam]</B></font>"))
+		loaded_ammo--
 	else
-		var/dam = rand(min_damage, max_damage)
-		target.TakeDamage(dam)
-		new /obj/effect/floater/small(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>-[dam]</B></font>"))
+		new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>MISS</B></font>"))
 
 	for(var/i = 1 to burst)
 		PlaySound(fire_sound, user.loc, 75)

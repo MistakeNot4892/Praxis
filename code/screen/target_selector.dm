@@ -100,13 +100,13 @@
 	name = "Previous Target"
 	icon_state = "left"
 	signal = "previous"
-	screen_loc = "CENTER-2,CENTER-3"
+	screen_loc = "CENTER-2,CENTER-4:16"
 
 /obj/screen/target_selector/component/arrow_right
 	name = "Previous Target"
 	icon_state = "right"
 	signal = "next"
-	screen_loc = "CENTER+2,CENTER-3"
+	screen_loc = "CENTER+2,CENTER-4:16"
 
 /obj/screen/target_selector/component/confirm
 	name = "Confirm"

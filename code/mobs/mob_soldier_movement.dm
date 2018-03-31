@@ -71,7 +71,6 @@
 				if(controller.client)
 					controller.AddClientImage(I)
 
-
 /mob/soldier/proc/StepAlongPath(var/pathref)
 	while(current_path && current_path.len)
 		locked = TRUE

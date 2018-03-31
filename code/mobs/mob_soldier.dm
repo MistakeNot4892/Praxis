@@ -24,6 +24,7 @@ var/list/soldier_names = list(
 
 	var/list/actions = list(
 		/obj/screen/button/action/fire,
+		/obj/screen/button/action/reload,
 		/obj/screen/button/action/overwatch,
 		/obj/screen/button/action/defend
 	)
@@ -72,10 +73,24 @@ var/list/soldier_names = list(
 	name = pick(soldier_names)
 	nickname = pick(soldier_nicknames)
 
-	var/_actions = actions.Copy()
+
+	var/initial_offset = -(round(actions.len*0.5))
+	var/partial_offset = ""
+	if(actions.len % 2 == 0) partial_offset = ":16"
+
+	var/list/_actions = actions.Copy()
 	actions.Cut()
+
 	for(var/action in _actions)
-		actions += new action(_num = actions.len+1)
+		var/obj/screen/_action = new action(_num = actions.len+1, _final = actions.len+1 == _actions.len)
+		if(initial_offset == 0)
+			_action.screen_loc = "CENTER[partial_offset],2"
+		else if(initial_offset<0)
+			_action.screen_loc = "CENTER[initial_offset][partial_offset],2"
+		else
+			_action.screen_loc = "CENTER+[initial_offset][partial_offset],2"
+		initial_offset++
+		actions += _action
 
 	selected_highlight = image(loc = src, icon = 'icons/mobs/mob_selected.dmi', icon_state = "selected_base")
 	selected_highlight.layer = layer - 0.001
@@ -185,6 +200,7 @@ var/list/soldier_names = list(
 	firing.OnHit(src, target)
 	sleep(20)
 	if(controller)
+		controller.weapon_holder.UpdateWeapon(src)
 		if(moved_this_turn >= 2)
 			controller.NextSoldier()
 		else

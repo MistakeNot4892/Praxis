@@ -29,26 +29,48 @@
 
 	overlays.Cut()
 	var/list/overlays_to_add = list()
+
+	// Background plate.
+	var/image/I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "back")
+	I.pixel_w = 32
+	I.pixel_z = -16
+	overlays_to_add += I
+	I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "back")
+	I.pixel_w = 144
+	I.pixel_z = -16
+	overlays_to_add += I
+
+	// First weapon images.
+	I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[first_weapon.icon_state]")
+	I.pixel_w = 32
+	I.pixel_z = -16
+	overlays_to_add += I
+	I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[first_weapon.icon_state]_[first_weapon.loaded_ammo]")
+	I.pixel_w = 32
+	I.pixel_z = -16
+	overlays_to_add += I
+
+	// Second weapon images.
+	I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[second_weapon.icon_state]")
+	I.pixel_w = 144
+	I.pixel_z = -16
+	overlays_to_add += I
+	I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[second_weapon.icon_state]_[second_weapon.loaded_ammo]")
+	I.pixel_w = 144
+	I.pixel_z = -16
+	overlays_to_add += I
+
+	// Selected weapon corner overlay and maptext.
+	I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "sel")
 	if(soldier.selected_weapon == 1)
 		maptext = "<right>[FORMAT_MAPTEXT("<b>\[[first_weapon.name]\]</b>")]<br>[FORMAT_MAPTEXT(second_weapon.name)]</right>"
-		var/image/I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[first_weapon.icon_state]_sel")
 		I.pixel_w = 32
 		I.pixel_z = -16
-		overlays_to_add += I
-		I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[second_weapon.icon_state]")
-		I.pixel_w = 144
-		I.pixel_z = -16
-		overlays_to_add += I
 	else
 		maptext = "<right>[FORMAT_MAPTEXT(first_weapon.name)]<br>[FORMAT_MAPTEXT("<b>\[[second_weapon.name]\]</b>")]</right>"
-		var/image/I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[first_weapon.icon_state]")
-		I.pixel_w = 32
-		I.pixel_z = -16
-		overlays_to_add += I
-		I = image(icon = 'icons/screen/weapon_icons.dmi', icon_state = "[second_weapon.icon_state]_sel")
 		I.pixel_w = 144
 		I.pixel_z = -16
-		overlays_to_add += I
+	overlays_to_add += I
 
 	overlays = overlays_to_add
 
