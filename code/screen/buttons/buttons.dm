@@ -3,6 +3,7 @@
 	alpha = 255
 	plane = GUI_PLANE
 	layer = 2
+	var/use_sound = 'sounds/lrsf-soundpack/boop.wav'
 
 /obj/screen/button/Click()
 	doFunction(usr)
@@ -12,6 +13,7 @@
 		return 0
 	if(turn_controller.locked || user.selecting_target.active || (turn_controller.current_player != user))
 		return 0
+	PlaySound(use_sound, user.client, 75)
 	return 1
 
 // Sidebar.
@@ -87,3 +89,31 @@
 	. = ..()
 	if(.)
 		user.client.dir = turn(user.client.dir, 90)
+
+// Volume controls.
+/obj/screen/button/music
+	name = "Music On/Off"
+	screen_loc = "EAST,NORTH"
+	icon_state = "music"
+
+/obj/screen/button/music/doFunction(var/mob/controller/user)
+	..()
+	user.music_muted = !user.music_muted
+	icon_state = user.music_muted ? "musicoff" : "music"
+	PlaySound(use_sound, user.client, 75)
+	sleep(1)
+	if(user.music_muted)
+		user << sound(null, BGM_CHANNEL)
+	else if(bgm)
+		user << bgm
+
+/obj/screen/button/sounds
+	name = "Sound Effects On/Off"
+	screen_loc = "EAST-1,NORTH"
+	icon_state = "sound"
+
+/obj/screen/button/sounds/doFunction(var/mob/controller/user)
+	..()
+	user.sound_muted = !user.sound_muted
+	icon_state = user.sound_muted ? "soundoff" : "sound"
+	PlaySound(use_sound, user.client, 75)

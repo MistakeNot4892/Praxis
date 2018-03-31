@@ -159,6 +159,7 @@ var/list/soldier_names = list(
 	if(health_pips == 0)
 		icon_state = "dead"
 		dead = TRUE
+		PlaySound('sounds/lrsf-soundpack/death.wav', loc, 75)
 		density = FALSE
 		var/turf/T = loc
 		T.has_dense_atom = FALSE
@@ -173,8 +174,8 @@ var/list/soldier_names = list(
 	dir = get_dir(src, target)
 	target.dir = get_dir(target, src)
 	var/datum/weapon/firing = class_weapons[selected_weapon]
+	FocusControllersOn(target)
 	if(controller)
-		controller.loc = loc
 		ClearMoveTargets()
 		for(var/thing in (controller.turn_elements|actions))
 			var/obj/screen/button = thing

@@ -58,6 +58,7 @@
 
 /obj/screen/target_selector/panel/proc/GetSignal(var/signal, var/mob/controller/user)
 	if(active)
+		PlaySound('sounds/lrsf-soundpack/beep.wav', user.client, 75)
 		switch(signal)
 			if("previous")
 				current_choice--

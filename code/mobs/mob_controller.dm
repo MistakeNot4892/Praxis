@@ -82,7 +82,7 @@
 		soldier.UpdateMoveTargets()
 		name_holder.UpdateContents(soldier)
 		weapon_holder.UpdateWeapon(soldier)
-		loc = soldier.loc
+		FocusControllersOn(soldier)
 
 /mob/controller/proc/ClearSelectedSoldier()
 	if(soldier)

@@ -83,7 +83,9 @@
 /mob/soldier/Move()
 	var/turf/lastloc = loc
 	. = ..()
-	if(.)
+	if(. && loc)
+		FocusControllersOn(src)
+		PlaySound('sounds/lrsf-soundpack/footstep.wav', loc, 30)
 		if(istype(lastloc))
 			lastloc.has_dense_atom = FALSE
 			for(var/atom/movable/AM in lastloc.contents)

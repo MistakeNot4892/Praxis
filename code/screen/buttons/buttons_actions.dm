@@ -1,6 +1,7 @@
 // Combat actions.
 /obj/screen/button/action
 	maptext_y = -38
+	use_sound = 'sounds/lrsf-soundpack/beep.wav'
 
 /obj/screen/button/action/New(var/newloc,  var/_num)
 	..(null)

@@ -6,4 +6,6 @@
 #define DIAGONAL_DIRECTIONS
 #define CARDINAL_DIRECTIONS
 
+#define BGM_CHANNEL 15
+
 #define DEBUG

@@ -18,6 +18,7 @@
 	var/gunfire_x_jitter = 3
 	var/gunfire_y_jitter = 3
 	var/fire_cost = 2
+	var/fire_sound = 'sounds/lrsf-soundpack/pistol.wav'
 
 /datum/weapon/New()
 	..()
@@ -54,6 +55,7 @@
 		new /obj/effect/floater/small(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>-[dam]</B></font>"))
 
 	for(var/i = 1 to burst)
+		PlaySound(fire_sound, user.loc, 75)
 		DoFireAnim(user, target)
 		sleep(burst_delay)
 
@@ -79,6 +81,7 @@
 /datum/weapon/shotgun
 	name = "Shotgun"
 	icon_state = "shotgun"
+	fire_sound = 'sounds/lrsf-soundpack/shotgun.wav'
 	base_crit_chance = 20
 
 /datum/weapon/shotgun/GetRawHitChance(var/dist)
@@ -100,12 +103,13 @@
 	base_crit_chance = 0
 
 /datum/weapon/lmg
-	name = "Light Machine Gun"
+	name = "Machine Gun"
 	icon_state = "lmg"
 	base_crit_chance = 0
 	burst = 8
 	burst_delay = 3
 	fire_cost = 1
+	fire_sound = 'sounds/lrsf-soundpack/lmg.wav'
 
 /datum/weapon/lmg/GetRawHitChance(var/dist)
 	var/hit = ..()

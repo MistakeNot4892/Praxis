@@ -13,6 +13,8 @@
 #define FILE_DIR "icons/screen"
 #define FILE_DIR "icons/turfs"
 #define FILE_DIR "img"
+#define FILE_DIR "sounds"
+#define FILE_DIR "sounds/lrsf-soundpack"
 // END_FILE_DIR
 
 // BEGIN_PREFERENCES
@@ -25,6 +27,7 @@
 #include "code\world.dm"
 #include "code\client\client.dm"
 #include "code\effects\floaters.dm"
+#include "code\mobs\mob.dm"
 #include "code\mobs\mob_controller.dm"
 #include "code\mobs\mob_controller_gui.dm"
 #include "code\mobs\mob_controller_soldiers.dm"
@@ -37,6 +40,7 @@
 #include "code\screen\target_selector.dm"
 #include "code\screen\buttons\buttons.dm"
 #include "code\screen\buttons\buttons_actions.dm"
+#include "code\sound\sound.dm"
 #include "code\turfs\turf.dm"
 #include "code\turn\turn.dm"
 #include "code\weapons\weapon.dm"

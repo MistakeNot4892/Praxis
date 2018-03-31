@@ -19,7 +19,9 @@
 		new /obj/screen/button/next_soldier(src),
 		new /obj/screen/button/camera_left(src),
 		new /obj/screen/button/camera_right(src),
-		new /obj/screen/button/switch_weapons(src)
+		new /obj/screen/button/switch_weapons(src),
+		new /obj/screen/button/music(src),
+		new /obj/screen/button/sounds(src)
 	)
 	target_holder =        new(src)
 	name_holder =          new(src)

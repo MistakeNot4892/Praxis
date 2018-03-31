@@ -52,5 +52,7 @@
 	var/mob/controller/player = all_players[player_index]
 	if(!player.client)
 		spawn EndTurn()
-		return
-	SetCurrentPlayer(player)
+	else
+		SetCurrentPlayer(player)
+		if(!player.remaining_moves.len)
+			spawn EndTurn()
