@@ -3,6 +3,7 @@
 	icon = 'icons/turfs/turf.dmi'
 	icon_state = "floor"
 
+	var/image/concealment_overlay
 	var/image/selection_overlay
 	var/height = 0
 	var/move_cost = 1
@@ -10,11 +11,16 @@
 	var/tmp/has_dense_atom
 
 /turf/New()
-	..()
+
 	selection_overlay = new(loc = src, icon = 'icons/turfs/turf_highlight.dmi', icon_state = "")
 	selection_overlay.layer = TURF_LAYER + 0.01
 	selection_overlay.alpha = 0
 	selection_overlay.pixel_z = standing_offset
+
+	concealment_overlay = image(loc = src, icon = 'icons/turfs/turf_highlight.dmi', icon_state = "concealed")
+	concealment_overlay.layer = MOB_LAYER + 0.1
+
+	..()
 
 /turf/proc/SetHighlight(var/_state)
 	selection_overlay.icon_state = "[_state]"

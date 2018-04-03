@@ -1,3 +1,16 @@
+/proc/UpdateSoldierVisibility(var/mob/soldier/_soldier)
+	for(var/mob/controller/player in turn_controller.all_players)
+		if(player.owned_soldiers[_soldier])
+			player.AddClientImage(_soldier.friendly_health)
+			player.RemoveClientImage(_soldier.visibility_override)
+		else if(_soldier.loc in player.visible_turfs)
+			player.AddClientImage(_soldier.enemy_health)
+			player.RemoveClientImage(_soldier.visibility_override)
+		else
+			player.RemoveClientImage(_soldier.friendly_health)
+			player.RemoveClientImage(_soldier.enemy_health)
+			player.AddClientImage(_soldier.visibility_override)
+
 var/list/soldier_nicknames = list(
 	"Chirpy",
 	"Flange",
@@ -56,15 +69,17 @@ var/list/soldier_names = list(
 
 	var/hunkering_down
 	var/overwatching
+	var/vision_range = 9
 
-	var/image/invisible_image
+	var/image/visibility_override
 
 /mob/soldier/New(var/newloc, var/_controller)
 
-	..(newloc)
+	visibility_override = image(loc = src, icon = 'icons/blank.dmi')
+	visibility_override.alpha = 0
+	visibility_override.override = 1
 
-	override = 1
-	invisible_image = image(src, icon = 'icons/blank.dmi')
+	..(newloc)
 
 	owner = _controller
 
@@ -171,10 +186,14 @@ var/list/soldier_names = list(
 					cover += T.height - current.height
 	return cover
 
-/mob/soldier/proc/TakeDamage(var/dam)
+/mob/soldier/proc/TakeDamage(var/dam, var/crit)
+	if(dam > health_pips)
+		dam = health_pips
+	if(crit)
+		new /obj/effect/floater(loc, FORMAT_MAPTEXT("<font color='#f7aa30'><B>CRIT -[dam]</B></font>"))
+	else
+		new /obj/effect/floater/small(loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>-[dam]</B></font>"))
 	health_pips -= dam
-	if(health_pips < 0)
-		health_pips = 0
 	UpdateHealth()
 	if(health_pips == 0)
 		icon_state = "dead"
@@ -226,7 +245,7 @@ var/list/soldier_names = list(
 /mob/soldier/proc/UpdateHealth()
 
 	for(var/mob/controller/controller in turn_controller.all_players)
-		if(controller.all_soldiers[src])
+		if(controller.owned_soldiers[src])
 			controller.RemoveClientImage(friendly_health)
 		else
 			controller.RemoveClientImage(enemy_health)
@@ -240,14 +259,15 @@ var/list/soldier_names = list(
 	enemy_health.overlays = enemy_health_pips
 
 	for(var/mob/controller/controller in turn_controller.all_players)
-		if(controller.all_soldiers[src])
-			controller.AddClientImage(friendly_health)
-		else
-			controller.AddClientImage(enemy_health)
+		if(loc in controller.visible_turfs)
+			if(controller.owned_soldiers[src])
+				controller.AddClientImage(friendly_health)
+			else
+				controller.AddClientImage(enemy_health)
 
 /mob/soldier/Click(location,control,params)
 	if(!turn_controller.locked && turn_controller.current_player == usr)
 		var/mob/controller/clicker = usr
-		if(!dead && istype(clicker) && !clicker.selecting_target.active && clicker.soldier != src && !controller && clicker.all_soldiers[src] && (src in clicker.remaining_moves) && !(clicker.soldier && clicker.soldier.locked))
+		if(!dead && istype(clicker) && !clicker.selecting_target.active && clicker.soldier != src && !controller && clicker.owned_soldiers[src] && (src in clicker.remaining_moves) && !(clicker.soldier && clicker.soldier.locked))
 			clicker.SetSelectedSoldier(src)
 

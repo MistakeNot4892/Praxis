@@ -12,7 +12,7 @@
 		if(controller.soldier)
 			controller.SetSelectedSoldier(controller.soldier)
 		else
-			controller.SetSelectedSoldier(controller.all_soldiers[1])
+			controller.SetSelectedSoldier(controller.owned_soldiers[1])
 
 
 /datum/turn/proc/SetCurrentPlayer(var/mob/controller/player)
@@ -23,7 +23,7 @@
 	current_player = player
 	if(istype(current_player))
 		current_player.remaining_moves.Cut()
-		for(var/mob/soldier/soldier in current_player.all_soldiers)
+		for(var/mob/soldier/soldier in current_player.owned_soldiers)
 			if(!soldier.dead)
 				current_player.remaining_moves += soldier
 				soldier.moved_this_turn = 0

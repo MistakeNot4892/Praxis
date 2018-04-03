@@ -34,6 +34,8 @@
 
 /mob/soldier/proc/UpdateMoveTargets()
 
+	UpdateSoldierVisibility(src)
+
 	locked = FALSE
 	turn_controller.locked = FALSE
 	ClearMoveTargets()
@@ -61,8 +63,8 @@
 			controller.AddClientImage(T.selection_overlay)
 
 	if(controller)
-		for(var/mob/soldier/soldier in viewers(10, src)-src)
-			if(!controller.all_soldiers[soldier] && !soldier.dead)
+		for(var/mob/soldier/soldier in viewers(vision_range, src)-src)
+			if(!controller.owned_soldiers[soldier] && !soldier.dead)
 				var/image/I = image(loc = controller.target_holder, icon = 'icons/screen/target_indicator.dmi', icon_state = "target")
 				I.plane = GUI_PLANE
 				I.pixel_w = -(22 * target_indicators.len)
@@ -87,6 +89,13 @@
 	var/turf/lastloc = loc
 	. = ..()
 	if(. && loc)
+		for(var/turf/T in view(vision_range, loc))
+			if(owner)
+				owner.visible_turfs |= T
+				owner.RemoveClientImage(T.concealment_overlay)
+			for(var/mob/soldier/soldier in T)
+				UpdateSoldierVisibility(soldier)
+		UpdateSoldierVisibility(src)
 		FocusControllersOn(src)
 		PlaySound('sounds/lrsf-soundpack/footstep.wav', loc, 30)
 		if(istype(lastloc))

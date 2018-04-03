@@ -20,6 +20,7 @@
 	var/fire_cost = 1
 	var/end_turn_on_use = TRUE
 	var/fire_sound = 'sounds/lrsf-soundpack/pistol.wav'
+	var/can_reload = TRUE
 
 /datum/weapon/New()
 	..()
@@ -38,6 +39,9 @@
 	else if(hit < 0) hit = 0
 	return hit
 
+/datum/weapon/proc/OnMiss(var/mob/soldier/user, var/mob/soldier/target)
+	new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>MISS</B></font>"))
+
 /datum/weapon/proc/OnHit(var/mob/soldier/user, var/mob/soldier/target)
 
 	set waitfor = 0
@@ -47,14 +51,12 @@
 		if(can_crit && prob(base_crit_chance))
 			var/dam = rand(min_crit_damage, max_crit_damage)
 			target.TakeDamage(dam)
-			new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#f7aa30'><B>CRIT -[dam]</B></font>"))
 		else
 			var/dam = rand(min_damage, max_damage)
 			target.TakeDamage(dam)
-			new /obj/effect/floater/small(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>-[dam]</B></font>"))
 		loaded_ammo--
 	else
-		new /obj/effect/floater(target.loc, FORMAT_MAPTEXT("<font color='#fe3b1e'><B>MISS</B></font>"))
+		OnMiss(user, target)
 
 	for(var/i = 1 to burst)
 		PlaySound(fire_sound, user.loc, 75)
@@ -152,11 +154,27 @@
 /datum/weapon/rocket
 	name = "Rocket Launcher"
 	icon_state = "rocket"
+	can_reload = FALSE
 	max_ammo = 1
 	single_use = TRUE
 	min_damage = 6
 	max_damage = 6
 	can_crit = FALSE
+	hit_overlay = null
+	burst_delay = 0
+	fire_cost = 2
+	fire_sound = 'sounds/jamastram-soundpack/explosion.wav'
 
-/datum/weapon/rocket/GetRawHitChance(var/dist)
-	return 100
+/datum/weapon/rocket/GetHitChance(var/dist, var/cover)
+	return 90
+
+/datum/weapon/rocket/OnHit(var/mob/soldier/user, var/mob/soldier/target)
+	loaded_ammo--
+	PlaySound(fire_sound, target.loc, 100)
+	if(!prob(GetHitChance()))
+		target = pick(trange(3, target))
+	for(var/turf/T in trange(1, target))
+		new /obj/effect/explosion(T)
+		for(var/mob/soldier/soldier in T.contents)
+			soldier.TakeDamage(6)
+

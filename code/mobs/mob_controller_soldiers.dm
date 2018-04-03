@@ -1,9 +1,9 @@
-var/spawn_tick = 1
+var/spawn_tick = rand(1,8)
 var/spawn_bound = 10
 
 /mob/controller/proc/CreateDefaultSoldiers()
 	remaining_moves = list()
-	all_soldiers = list()
+	owned_soldiers = list()
 	for(var/soldiertype in list(
 		/mob/soldier/assault,
 		/mob/soldier/heavy,
@@ -37,7 +37,7 @@ var/spawn_bound = 10
 				if(7) placing = locate(rand(x31,x32),rand(y21,y22),1)
 				if(8) placing = locate(rand(x31,x32),rand(y31,y32),1)
 		var/mob/soldier/new_soldier = new soldiertype(placing, src)
-		all_soldiers[new_soldier] = new_soldier
+		owned_soldiers[new_soldier] = new_soldier
 		remaining_moves += new_soldier
 	spawn_tick++
 	if(spawn_tick > 8)

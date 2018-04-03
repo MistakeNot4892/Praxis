@@ -1,10 +1,3 @@
-/obj/effect
-	name = ""
-	icon = 'icons/screen/floaters.dmi'
-	mouse_opacity = 0
-	plane = GUI_PLANE
-	layer = 10
-
 /obj/effect/floater
 	pixel_w = -16
 	maptext_y = -11

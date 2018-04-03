@@ -15,6 +15,7 @@
 #define FILE_DIR "img"
 #define FILE_DIR "sounds"
 #define FILE_DIR "sounds/lrsf-soundpack"
+#define FILE_DIR "sounds/xcom-music"
 // END_FILE_DIR
 
 // BEGIN_PREFERENCES
@@ -26,6 +27,8 @@
 #include "code\_helpers.dm"
 #include "code\world.dm"
 #include "code\client\client.dm"
+#include "code\effects\_effect.dm"
+#include "code\effects\explosion.dm"
 #include "code\effects\floaters.dm"
 #include "code\mobs\mob.dm"
 #include "code\mobs\mob_controller.dm"

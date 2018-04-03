@@ -74,7 +74,7 @@
 
 /obj/screen/button/action/reload/Update(var/mob/soldier/soldier)
 	var/datum/weapon/firing = soldier.class_weapons[soldier.selected_weapon]
-	if(firing.loaded_ammo < firing.max_ammo)
+	if(firing.can_reload && firing.loaded_ammo < firing.max_ammo)
 		icon_state = "reload"
 	else
 		icon_state = "reload_off"
@@ -83,7 +83,7 @@
 	. = ..()
 	if(. && user.soldier)
 		var/datum/weapon/firing = user.soldier.class_weapons[user.soldier.selected_weapon]
-		if(firing.loaded_ammo < firing.max_ammo)
+		if(firing.can_reload && firing.loaded_ammo < firing.max_ammo)
 			PlaySound('sounds/lrsf-soundpack/reload.wav', user.loc, 75)
 			new /obj/effect/floater/large(user.soldier.loc, FORMAT_MAPTEXT("RELOADED"))
 			firing.loaded_ammo = firing.max_ammo

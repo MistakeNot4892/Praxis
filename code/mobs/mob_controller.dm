@@ -5,13 +5,16 @@
 	sight = SEE_MOBS | SEE_TURFS | SEE_OBJS
 
 	var/mob/soldier/soldier
-	var/list/all_soldiers
+	var/list/owned_soldiers
 	var/max_soldiers = 3
 	var/list/remaining_moves
 	var/current_soldier_index = 1
+	var/list/visible_turfs
 
 /mob/controller/New()
+
 	turn_controller.all_players += src
+	visible_turfs = list()
 
 	CreateGui()
 	CreateDefaultSoldiers()
@@ -39,14 +42,14 @@
 
 	for(var/mob/controller/controller in turn_controller.all_players)
 		if(controller == src) continue
-		for(var/mob/soldier/sol in controller.all_soldiers)
-			AddClientImage(sol.enemy_health)
-		for(var/mob/soldier/sol in all_soldiers)
-			controller.AddClientImage(sol.enemy_health)
-
-	for(var/thing in all_soldiers)
-		var/mob/soldier/soldier = thing
-		AddClientImage(soldier.invisible_image)
+		for(var/mob/soldier/sol in controller.owned_soldiers)
+			if(sol.loc in visible_turfs)
+				AddClientImage(sol.enemy_health)
+				RemoveClientImage(sol.visibility_override)
+		for(var/mob/soldier/sol in owned_soldiers)
+			if(sol.loc in visible_turfs)
+				controller.AddClientImage(sol.enemy_health)
+				controller.RemoveClientImage(sol.visibility_override)
 
 /mob/controller/proc/LastSoldier(var/start_of_turn = FALSE)
 	if(remaining_moves.len)
